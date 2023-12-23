@@ -1,0 +1,37 @@
+1. Population Type (Functions)
+    a. Random points
+    b. All points with LOS excluding goal point
+    c. All points with LOS including goal point (X second timeout)
+    d. Variable length individuals
+
+2. Population Size and Shape (Variables)
+    a. Number of individuals (chromosomes) in population - integer value
+    b. Number of genes in an individuals - integer value
+
+3. Genetic Algorithm Characteristics (Variables)
+    a. Crossover Rate - decimal value
+    b. Mutation Rate - decimal value
+    c. Number of Generations - integer value
+
+4. Genetic Algorithm Methods
+    a. Mutation Methods (Functions)
+        i. Point Mutation 
+        ii. Swap Mutation
+        iii. Inversion Mutation
+    b. Crossover Methods (Functions)
+        i. Single Point Crossover
+        ii. Multi Point Crossover
+        iii. Uniform Crossover
+    c. Selection Methods (Functions)
+        i. Roulette Wheel
+        ii. Tournament
+        iii. Stochastic Universal Sampling (Functions)
+    d. Termination Conditions
+        i. Generations Limit
+        ii. Time Limit
+        iii. Population Stagnation Limit
+
+5. Post-Processing (Functions)
+    a. All Permutations
+
+

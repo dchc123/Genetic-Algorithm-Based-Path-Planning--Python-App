@@ -1,0 +1,120 @@
+F = stlread('NYC_Model.stl');
+points = F.Points;
+CL = F.ConnectivityList;
+
+BaseStationTotal=100;
+height = 0.2;
+
+receiver = [200;1160;height*1000];
+
+% receiver = [500;1000;height*1000];
+
+%  LOS=[1000,2500,height*2000];
+%  NLOS=[800,500,height*2000];
+% % 
+%  BaseStations = [LOS;
+%                  NLOS];
+
+possibleLocations=[];
+BaseStations=[];
+
+for i=1:length(points)
+    if points(i,3)>100 && points(i,3)<250
+        possibleLocations=[possibleLocations;points(i,:)];
+        
+    end
+end
+
+random_numbers = randi([1, length(possibleLocations)], 1, BaseStationTotal);
+
+for i=1:length(random_numbers)
+    BaseStations=[BaseStations;possibleLocations(random_numbers(i),:)];
+end
+
+RelativeBaseStations=[];
+
+for i = 1:size(BaseStations,1)
+    New_Point=BaseStations(i,:)-transpose(receiver);
+    RelativeBaseStations = [RelativeBaseStations;New_Point];
+end
+
+[DirVectorsXY,connectivity_sortedXY,DirVectorsXN,connectivity_sortedXN,...
+    DirVectorsNN,connectivity_sortedNN,DirVectorsNY,connectivity_sortedNY]...
+    = city_cut(points,CL, receiver,RelativeBaseStations);
+
+
+[LOS] = [];
+[NLOS] = [];
+
+%need to find way to not call this if DV does not exist
+if size(DirVectorsXY,1) ~= 0
+    [LOSXY, NLOSXY] = city_LOS(DirVectorsXY,receiver, points, connectivity_sortedXY);
+    [LOS] = [LOS;LOSXY];
+    [NLOS] = [NLOS;NLOSXY];
+end
+if size(DirVectorsXN,1) ~= 0
+    [LOSXN, NLOSXN] = city_LOS(DirVectorsXN,receiver, points, connectivity_sortedXN);
+    [LOS] = [LOS;LOSXN];
+    [NLOS] = [NLOS;NLOSXN];
+end
+if size(DirVectorsNN,1) ~= 0
+    [LOSNN, NLOSNN] = city_LOS(DirVectorsNN,receiver, points, connectivity_sortedNN);
+    [LOS] = [LOS;LOSNN];
+    [NLOS] = [NLOS;NLOSNN];
+end
+if size(DirVectorsNY,1) ~= 0
+    [LOSNY, NLOSNY] = city_LOS(DirVectorsNY,receiver, points, connectivity_sortedNY);
+    [LOS] = [LOS;LOSNY];
+    [NLOS] = [NLOS;NLOSNY];
+end
+
+figure(6)
+surf=trisurf(F);
+
+xlabel('X position relative to ref. point, m');
+ylabel('Y position relative to ref. point, m');
+zlabel('Height above ground, m');
+xlim([0 1285]);
+ylim([0 2810]);
+zlim([0 1000]);
+shading interp;
+colormap bone;
+daspect([1 1 1]);
+hold on
+scatter3(receiver(1),receiver(2),receiver(3), 'filled');
+hold on
+
+basestation=[];
+
+for j = 1:size(LOS,1)
+    
+   basestation=transpose(receiver)+LOS(j,:); 
+
+   pts = [transpose(receiver); basestation];
+    
+   plot3(pts(:,1), pts(:,2), pts(:,3), 'g','LineWidth', 1.5)
+
+   hold on 
+end
+   
+ 
+for i = 1:size(NLOS,1)
+    
+   basestation=transpose(receiver)+NLOS(i,:); 
+
+   pts = [transpose(receiver); basestation];
+    
+   plot3(pts(:,1), pts(:,2), pts(:,3), 'r','LineWidth', 1.5)
+
+   hold on 
+end
+
+disp(['Basestations in LOS: ' num2str(length(LOS))])
+disp(['Basestations in NLOS: ' num2str(length(NLOS))])
+
+
+
+
+
+
+
