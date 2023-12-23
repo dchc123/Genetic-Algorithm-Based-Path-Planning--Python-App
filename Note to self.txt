@@ -1,0 +1,1 @@
+Build wrapper for conveniently selecting a target area and then running path planning scripts. Provide work updates to end-user on progress. Consider how the astronomical run-time could be reduced. Cloud computing for example. How would I go about estimating the work-load if I were to use cloud computing?
